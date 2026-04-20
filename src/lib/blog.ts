@@ -25,7 +25,9 @@ export interface BlogPost extends BlogPostMeta {
 export function getAllPosts(): BlogPostMeta[] {
   if (!fs.existsSync(CONTENT_DIR)) return [];
 
-  const files = fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith(".md"));
+  const files = fs
+    .readdirSync(CONTENT_DIR)
+    .filter((f) => f.endsWith(".md") && !f.startsWith("_"));
 
   const posts = files
     .map((filename) => {
@@ -55,7 +57,9 @@ export function getAllPosts(): BlogPostMeta[] {
 export function getPostBySlug(slug: string): BlogPost | null {
   if (!fs.existsSync(CONTENT_DIR)) return null;
 
-  const files = fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith(".md"));
+  const files = fs
+    .readdirSync(CONTENT_DIR)
+    .filter((f) => f.endsWith(".md") && !f.startsWith("_"));
 
   for (const filename of files) {
     const filePath = path.join(CONTENT_DIR, filename);
@@ -87,7 +91,9 @@ export function getPostBySlug(slug: string): BlogPost | null {
 export function getAllSlugs(): string[] {
   if (!fs.existsSync(CONTENT_DIR)) return [];
 
-  const files = fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith(".md"));
+  const files = fs
+    .readdirSync(CONTENT_DIR)
+    .filter((f) => f.endsWith(".md") && !f.startsWith("_"));
 
   return files.map((filename) => {
     const filePath = path.join(CONTENT_DIR, filename);
