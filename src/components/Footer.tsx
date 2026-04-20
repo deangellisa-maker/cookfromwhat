@@ -14,9 +14,6 @@ export default function Footer() {
             </p>
           </div>
           <div className="flex gap-6 text-sm text-gray-500">
-            <Link href="/" className="hover:text-amber-600 transition-colors">
-              Search
-            </Link>
             <Link
               href="/blog"
               className="hover:text-amber-600 transition-colors"
@@ -28,6 +25,24 @@ export default function Footer() {
               className="hover:text-amber-600 transition-colors"
             >
               About
+            </Link>
+            <Link
+              href="/privacy"
+              className="hover:text-amber-600 transition-colors"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              className="hover:text-amber-600 transition-colors"
+            >
+              Terms
+            </Link>
+            <Link
+              href="/affiliate-disclosure"
+              className="hover:text-amber-600 transition-colors"
+            >
+              Affiliate Disclosure
             </Link>
           </div>
         </div>

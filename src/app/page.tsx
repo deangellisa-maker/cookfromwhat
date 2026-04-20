@@ -1,29 +1,10 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import AdBanner from "@/components/AdBanner";
+import HeroSearch from "@/components/HeroSearch";
+import { getAllPosts } from "@/lib/blog";
 
 export default function HomePage() {
-  const [ingredients, setIngredients] = useState("");
-  const router = useRouter();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!ingredients.trim()) return;
-    const params = new URLSearchParams();
-    params.set("ingredients", ingredients.trim());
-    router.push(`/search?${params.toString()}`);
-  };
-
-  const quickSearches = [
-    "chicken, rice, garlic",
-    "pasta, tomatoes, basil",
-    "eggs, cheese, bread",
-    "ground beef, potatoes, onion",
-    "salmon, lemon, broccoli",
-    "beans, rice, cumin",
-  ];
+  const latestPosts = getAllPosts().slice(0, 3);
 
   return (
     <div>
@@ -33,50 +14,14 @@ export default function HomePage() {
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             What do you have?
           </h1>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-gray-600 mb-3">
             Type your ingredients. Get recipes. No life stories.
           </p>
+          <p className="text-sm text-gray-500 mb-8">
+            Search thousands of tested recipes. No signup. No app. Just recipes.
+          </p>
 
-          <form onSubmit={handleSearch} className="space-y-4">
-            <div className="relative">
-              <label htmlFor="ingredients-input" className="sr-only">
-                Enter your ingredients
-              </label>
-              <input
-                id="ingredients-input"
-                type="text"
-                value={ingredients}
-                onChange={(e) => setIngredients(e.target.value)}
-                placeholder="chicken, garlic, lemon, olive oil..."
-                className="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all bg-white"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="px-8 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-lg"
-            >
-              Find Recipes
-            </button>
-          </form>
-
-          {/* Quick searches */}
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {quickSearches.map((q) => (
-              <button
-                key={q}
-                onClick={() => {
-                  setIngredients(q);
-                  const params = new URLSearchParams();
-                  params.set("ingredients", q);
-                  router.push(`/search?${params.toString()}`);
-                }}
-                className="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-full hover:border-amber-400 hover:text-amber-700 transition-colors text-gray-600"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
+          <HeroSearch />
         </div>
       </section>
 
@@ -125,21 +70,70 @@ export default function HomePage() {
 
       <AdBanner className="max-w-4xl mx-auto px-4 mb-8" />
 
-      {/* Recent articles teaser */}
+      {/* Latest Recipes */}
       <section className="max-w-4xl mx-auto px-4 py-8 mb-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900">Latest Recipes</h2>
-          <a
+          <Link
             href="/blog"
             className="text-amber-600 hover:text-amber-700 text-sm font-medium"
           >
             View all &rarr;
-          </a>
+          </Link>
         </div>
-        <p className="text-gray-600">
+        <p className="text-gray-600 mb-6">
           Real recipes we actually cook. Technique tips included. No scrolling
           past someone&apos;s childhood memories to find the ingredient list.
         </p>
+
+        {latestPosts.length === 0 ? (
+          <p className="text-gray-500 py-8 text-center">
+            New recipes coming soon.
+          </p>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {latestPosts.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              >
+                {post.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-40 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-40 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <span className="text-4xl">🍳</span>
+                  </div>
+                )}
+                <div className="p-5">
+                  <h3 className="font-semibold text-gray-900 group-hover:text-amber-600 transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mt-2 line-clamp-2">
+                    {post.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-3 text-xs text-gray-500">
+                    {post.total_time > 0 && (
+                      <span className="bg-gray-100 px-2 py-1 rounded-full">
+                        {post.total_time} min
+                      </span>
+                    )}
+                    {post.servings > 0 && (
+                      <span className="bg-gray-100 px-2 py-1 rounded-full">
+                        Serves {post.servings}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
